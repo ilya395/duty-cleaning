@@ -7,7 +7,7 @@ import { Modal, Select } from 'antd';
 const { Option } = Select;
 
 const ModalWindow = (props) => {
-    console.log('#### Modal props: ', props);
+    // console.log('#### Modal props: ', props);
 
     const [disabledSelect, setDisabledSelect] = useState(false);
 
@@ -23,7 +23,7 @@ const ModalWindow = (props) => {
     }
 
     function onChange(value) {
-        console.log(`selected ${value}`, moment(props.date).format('D'));
+        // console.log(`selected ${value}`, moment(props.date).format('D'));
         props.changeNewEventId(+value, moment(props.date));
     }
     

@@ -15,6 +15,7 @@ function App() {
   const [userId, setUserId] = useState(false);
   const { auth } = useContext(Firebase);
 
+  useEffect(() => setLoading(false), []);
   useEffect(() => {
     if (!localStorage.getItem('userId')) {
       console.log('we don`t know who are you!', localStorage.getItem('userid'));
@@ -22,7 +23,6 @@ function App() {
     } else {
 
       auth.onAuthStateChanged(user => {
-        setLoading(false);
 
         console.log(user);
 

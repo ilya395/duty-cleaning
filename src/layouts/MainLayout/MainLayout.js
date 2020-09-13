@@ -25,7 +25,7 @@ const dataDefault = [
 ];
 
 const MainLayout = (props) => {
-    console.log(props);
+    // console.log(props);
     // коллекция объектов, которые нужно распределить по дням
     const [data, setData] = useState(dataDefault);
     // текущая дата
@@ -81,11 +81,11 @@ const MainLayout = (props) => {
       })
         .once('value')
         .then(res => {
-          console.log(res.val());
+          // console.log(res.val());
           for ( let i in res.val() ) { // потомучто, если к нам приходят мутации из 1 элема с ключом 0, то приложение рассматривает это как массив
             muts[i] = res.val()[i];
           }
-          console.log(muts, res.val())
+          // console.log(muts, res.val())
         })
         .then(() => {
           setMutationData(muts);
@@ -102,7 +102,7 @@ const MainLayout = (props) => {
     }, []);
     // массив с данными для календаря 
     useEffect(() => {
-      console.log('#### mutationData1: ', mutationData);
+      // console.log('#### mutationData1: ', mutationData);
       setdataForCalendar(() => counterEvents({
         data, 
         today, 
@@ -121,9 +121,9 @@ const MainLayout = (props) => {
     // console.log(thisMonth, numberOfDaysInThisMonth, dataForCalendar);
 
     const clickOnDay = (event) => {
-      console.log(event);
+      // console.log(event);
       setModal(!modal);
-      console.log(modal);
+      // console.log(modal);
       setChangeDate(event.end);
       setChangeEventId(event.eventId);
       setChangeEventTitle(event.title);
@@ -131,11 +131,11 @@ const MainLayout = (props) => {
 
     const changeNewEventId = async (newEventId, date) => {
       const num = +moment(date).format('D') - 1;
-      console.log(num, newEventId);
+      // console.log(num, newEventId);
       setMutationData( (prevState) => {
         return {...prevState, [num]: newEventId}
       } ); // индекс дня: id очердности
-      console.log(mutationData, moment(date).format('YYYY'), moment(date).format('M'));
+      // console.log(mutationData, moment(date).format('YYYY'), moment(date).format('M'));
       let mutsFromFirebase = {};
       await getMutationsRef({
         year: moment(date).format('YYYY'),
@@ -146,11 +146,11 @@ const MainLayout = (props) => {
           res.val().forEach((item, index) => {
             mutsFromFirebase[index] = item;
           })
-          console.log(mutsFromFirebase, res.val())
+          // console.log(mutsFromFirebase, res.val())
         })
         .then(() => {
           mutsFromFirebase[num] = newEventId;
-          console.log(num, newEventId, mutsFromFirebase)
+          // console.log(num, newEventId, mutsFromFirebase)
           // return {...mutsFromFirebase, [num]: newEventId } // не расширяет
         })
         .catch(error => console.log(error.message));

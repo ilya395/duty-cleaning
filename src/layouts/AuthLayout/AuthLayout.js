@@ -21,35 +21,47 @@ const tailLayout = {
     },
 };
 
-const AuthLayout = () => {
+const AuthLayout = (props) => {
+
+    console.log('#### props in Auth: ', props, props.history);
+
+    const [history, setHistory] = useState({});
+    useEffect(() => {
+        const { history } = props;
+        setHistory(history);
+    }, [props]);
 
     const [authOk, setAuthOk] = useState(false);
 
-    
+    let localUserData = localStorage.getItem('userId');
+    const [localData, setLocalData] = useState(localUserData);
 
     const { signWithEmail } = useContext(FirebaseContext);
-    const { history } = useContext(RoutesContext);
+    // const { history } = props; // useContext(RoutesContext);
     
     useEffect(() => {
+        // const { history } = props;
         if ( authOk === true ) {
             // console.log(history);
-            history.push('/');  
+            history.push('/main');  
         }
     }, [authOk, history]);
 
     const onFinish = values => {
 
-      console.log('Success:', values);
+    //   const { history } = props;
+
+      
       const {email, password} = values;
       signWithEmail(email, password)
         .then(res => {
+            console.log('Success:', values);
             console.log(res);
             localStorage.setItem('userId', res.user.uid);
             setAuthOk(true);
             console.log(localStorage.getItem('userId'));
-            // const { history } = props;
             console.log(history);
-            history.push('/');
+            history.push('/main');
         })
         .catch(() => {
             console.log('кто ты тварь?');

@@ -5,14 +5,15 @@ import AuthLayout from './layouts/AuthLayout/AuthLayout';
 
 import RoutesContext from './context/routesContext';
 
-const useRoutes = isAuthenticated => {
+const useRoutes = (isAuthenticated) => {
     console.log(isAuthenticated)
+
     if (isAuthenticated) {
         return (
             <Switch>
                 <Route 
-                    path="/"
-                    exact
+                    path="/main"
+                    // exact
                     render={(props) => {
                         return (
                             <RoutesContext.Provider value={{...props}}>
@@ -21,7 +22,7 @@ const useRoutes = isAuthenticated => {
                         );
                     }}
                 />
-                <Redirect to="/" />
+                <Redirect to="/main" />
             </Switch>
         )
     }
@@ -30,7 +31,7 @@ const useRoutes = isAuthenticated => {
         <Switch>
             <Route 
                 path="/auth" 
-                exact
+                // exact
                 render={(props) => {
                     return (
                         <RoutesContext.Provider value={{...props}}>
@@ -42,7 +43,14 @@ const useRoutes = isAuthenticated => {
             </Route>
             <Redirect to="/auth" />
         </Switch>
+        // <Switch>
+        //     <Route path="/auth" exact>
+        //         <AuthLayout />
+        //     </Route>
+        //     <Redirect to="/auth" />
+        // </Switch>
     );
 }
 
 export default useRoutes;
+

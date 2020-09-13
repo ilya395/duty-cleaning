@@ -16,8 +16,8 @@ moment.locale('ru', {
         doy: 1,
     },
 });
-console.log(moment);
-console.log(moment.locale());
+// console.log(moment);
+// console.log(moment.locale());
 const localizer = momentLocalizer(moment);
 
 const myEventsList = [{
@@ -31,7 +31,7 @@ const myEventsList = [{
 
 const MyCalendar = (props) => {
 
-  console.log('#### Props in Calendar', props.events)
+  // console.log('#### Props in Calendar', props.events)
 
     const move = (event) => {
         props.clickOnDay(event);
