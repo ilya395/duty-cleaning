@@ -50,3 +50,16 @@ table {
 body {
     font-family: 'Montserrat', sans-serif;
 }
+
+//
+.calendar-container .rbc-btn-group button {
+	display: none;
+}
+
+.work-area {
+	width: 100vw;
+	height: 100vh;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+  }

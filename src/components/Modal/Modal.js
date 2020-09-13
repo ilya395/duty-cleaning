@@ -13,16 +13,18 @@ const ModalWindow = (props) => {
 
     useEffect(() => {
         props.eventName === 'Выходной' ? setDisabledSelect(true) : setDisabledSelect(false);
-    });
+        const today = +moment(props.today).format('D');
+        const thisDay = +moment(props.date).format('D');
+        thisDay < today ? setDisabledSelect(true) : setDisabledSelect(false);
+    }, [props.eventName, props.today, props.date]);
 
     const handleCancel = () => {
         props.changeVisible(!props.visible);
     }
 
-
     function onChange(value) {
         console.log(`selected ${value}`, moment(props.date).format('D'));
-        props.changeNewEventId(+value, +moment(props.date).format('D'));
+        props.changeNewEventId(+value, moment(props.date));
     }
     
     function onBlur() {

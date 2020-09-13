@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 
 import './MainLayout.scss';
 import { Layout, Menu } from 'antd';
@@ -6,21 +6,28 @@ import { Layout, Menu } from 'antd';
 import MyCalendar from '../../components/Calendar/Calendar';
 import moment from 'moment';
 
+import LogoutButton from '../../components/LogoutButton/LogoutButton';
+
 import counterEvents from '../../services/index';
 import ModalWindow from '../../components/Modal/Modal';
+import Firebase from '../../context/firebaseContext';
 
 const { Header, Content, Footer } = Layout;
 
-const data = [
-  {title: 'архитекторы', id: 1},
-  {title: 'it', id: 2},
-  {title: 'бухгалтерия', id: 3},
-  {title: 'аналитики', id: 4},
-  {title: 'open space 1', id: 5},
-  {title: 'open space 2', id: 6},
+const dataDefault = [
+  {title: 'Ожидание данных', id: 999},
+  // {title: 'архитекторы', id: 1},
+  // {title: 'it', id: 2},
+  // {title: 'бухгалтерия', id: 3},
+  // {title: 'аналитики', id: 4},
+  // {title: 'open space 1', id: 5},
+  // {title: 'open space 2', id: 6},
 ];
 
-const MainLayout = () => {
+const MainLayout = (props) => {
+    console.log(props);
+    // коллекция объектов, которые нужно распределить по дням
+    const [data, setData] = useState(dataDefault);
     // текущая дата
     const [today, setToday] = useState(0);
     // текущий месяц
@@ -39,10 +46,52 @@ const MainLayout = () => {
     const [changeEventId, setChangeEventId] = useState(0);
     const [changeEventTitle, setChangeEventTitle] = useState('');
 
+    // коллекция объектов, которые нужно распределить по дням
+    const { getDepartmentsRef, getMutationsRef, auth } = useContext(Firebase);
+    useEffect(() => {
+      // получение данных из базы
+      getDepartmentsRef()
+        .once('value')
+        .then(res => {
+            const array = res.val();
+            let newArray = [];
+            array.forEach(element => {
+              newArray.push(element);
+            });
+            return newArray;
+        })
+        .then(res => {
+          setData(res);
+          console.log(`взяли data из базы`);
+        })
+        .catch(e => {
+          console.log(e.message);
+        });         
+    }, [getDepartmentsRef]);
     // текущая дата
     useEffect(() => {
-      setToday(new Date());
+      setToday(new Date()); // '2020-10-12'
     }, []);
+    // мутации календрных дней
+    useEffect(() => {
+      const muts = {};
+      getMutationsRef({
+        year: moment(today).format('YYYY'),
+        month: moment(today).format('M'),
+      })
+        .once('value')
+        .then(res => {
+          console.log(res.val());
+          for ( let i in res.val() ) { // потомучто, если к нам приходят мутации из 1 элема с ключом 0, то приложение рассматривает это как массив
+            muts[i] = res.val()[i];
+          }
+          console.log(muts, res.val())
+        })
+        .then(() => {
+          setMutationData(muts);
+        })
+        .catch(error => console.log(error.message));      
+    }, [today, getMutationsRef]);
     // текущий месяц
     useEffect(() => {
       setThisMonth(moment().format('M'));
@@ -66,7 +115,7 @@ const MainLayout = () => {
         mutations: mutationData
       }));
 
-    }, [today, mutationData]);
+    }, [today, data, mutationData]);
     // модалка
     
     // console.log(thisMonth, numberOfDaysInThisMonth, dataForCalendar);
@@ -80,11 +129,47 @@ const MainLayout = () => {
       setChangeEventTitle(event.title);
     }
 
-    const changeNewEventId = (newEventId, numberOfDay) => {
-      const num = numberOfDay - 1;
+    const changeNewEventId = async (newEventId, date) => {
+      const num = +moment(date).format('D') - 1;
       console.log(num, newEventId);
-      setMutationData({[num]: newEventId});
-      console.log(mutationData);
+      setMutationData( (prevState) => {
+        return {...prevState, [num]: newEventId}
+      } ); // индекс дня: id очердности
+      console.log(mutationData, moment(date).format('YYYY'), moment(date).format('M'));
+      let mutsFromFirebase = {};
+      await getMutationsRef({
+        year: moment(date).format('YYYY'),
+        month: moment(date).format('M')
+      })
+        .once('value')
+        .then(res => {
+          res.val().forEach((item, index) => {
+            mutsFromFirebase[index] = item;
+          })
+          console.log(mutsFromFirebase, res.val())
+        })
+        .then(() => {
+          mutsFromFirebase[num] = newEventId;
+          console.log(num, newEventId, mutsFromFirebase)
+          // return {...mutsFromFirebase, [num]: newEventId } // не расширяет
+        })
+        .catch(error => console.log(error.message));
+      await getMutationsRef({
+          year: moment(date).format('YYYY'),
+          month: moment(date).format('M')
+        })
+        .set(mutsFromFirebase)
+        .catch(error => console.log(error.message))
+    }
+
+    const logoutPlz = () => {
+      console.log('ок, logout');
+
+      auth.signOut();
+      localStorage.removeItem('userId');
+
+      const { history } = props;
+      history.push('/auth');
     }
     
     // первый элемент
@@ -98,6 +183,9 @@ const MainLayout = () => {
               <Menu.Item key="2">nav 2</Menu.Item>
               <Menu.Item key="3">nav 3</Menu.Item>
             </Menu>
+            <LogoutButton
+              logoutPlz={logoutPlz}
+            />
           </Header>
           <Content style={{ padding: '0 50px' }}>
             <div className="site-layout-content main-container">
@@ -114,6 +202,7 @@ const MainLayout = () => {
           eventId={changeEventId}
           eventName={changeEventTitle}
           changeNewEventId={changeNewEventId}
+          today={today}
         />
       </>
 
