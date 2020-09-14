@@ -4,7 +4,6 @@ import './AuthLayout.scss';
 
 import { Form, Input, Button } from 'antd';
 import FirebaseContext from '../../context/firebaseContext';
-// import RoutesContext from '../../context/routesContext';
 import Preloader from '../../components/Preloader/Preloader';
 
 const layout = {
@@ -66,7 +65,7 @@ const AuthLayout = (props) => {
             
             // console.log(localStorage.getItem('userId'));
             // console.log(history);
-            history.push('/main');
+            history.push('/');
         })
         .catch(() => {
             console.log('кто ты тварь?');

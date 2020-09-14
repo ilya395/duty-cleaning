@@ -3,7 +3,7 @@ import { Switch, Route, Redirect } from 'react-router-dom';
 import MainLayout from './layouts/MainLayout/MainLayout';
 import AuthLayout from './layouts/AuthLayout/AuthLayout';
 
-import RoutesContext from './context/routesContext';
+// import RoutesContext from './context/routesContext';
 
 import { PrivateRoute } from './services/privateRoute';
 
@@ -31,22 +31,23 @@ const useRoutes = (isAuthenticated) => {
 
     return (
         <Switch>
-            <PrivateRoute 
-                path="/main"
-                component={MainLayout}
-            />
             <Route 
                 path="/auth" 
                 render={(props) => {
                     return (
-                        <RoutesContext.Provider value={{...props}}>
+                        // <RoutesContext.Provider value={{...props}}>
                             <AuthLayout {...props} />
-                        </RoutesContext.Provider>
+                        // </RoutesContext.Provider>
                     );
                 }}
             >
             </Route>
-            <Redirect to="/auth" />
+            <PrivateRoute 
+                path="/"
+                exact
+                component={MainLayout}
+            />
+            <Redirect to="/" />
         </Switch>
         
         // <Switch>
