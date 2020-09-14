@@ -9,37 +9,59 @@ import Preloader from './components/Preloader/Preloader';
 
 function App() {
 
-  const localUserData = localStorage.getItem('userId');
+  // const localUserData = localStorage.getItem('userId');
 
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(false);
+  // const [routes, setRoutes] = useState(useRoutes(false));
   const { auth } = useContext(Firebase);
 
-  useEffect(() => setLoading(false), []);
+  // useEffect(() => setLoading(false), [userId]);
+  // useCallback(() => {
+    
+  // });
   useEffect(() => {
     if (!localStorage.getItem('userId')) {
-      console.log('we don`t know who are you!', localStorage.getItem('userid'));
+      console.log(
+        'we don`t know who are you!', 
+        // localStorage.getItem('userid')
+      );
       setUserId(false);
+      setLoading(false);
     } else {
 
+      console.log(
+        'we know who are you!', 
+        // localStorage.getItem('userid')
+      );
       auth.onAuthStateChanged(user => {
-
-        console.log(user);
+        setLoading(false);
+        // console.log(user);
 
         if (user) {
-          localStorage.setItem('userId', JSON.stringify(user.uid)); // user;
           setUserId(user.uid);
+          localStorage.setItem('userId', JSON.stringify(user.uid)); // user;
+          // setRoutes(useRoutes(userId));
+          
         } else {
+          setUserId(false);
           localStorage.removeItem('userId');
-          setUserId(null);
         }
 
-      });
-
+      })
+      // .then(res => console.log('норм вроде'))
+      // .catch(error => console.log(error));
     }
-  }, [userId, auth, localUserData]); 
+    
+  }, [userId, auth]); 
+
   
-  const routes = useRoutes(userId); 
+  // useEffect(() => {
+  //   console.log('#### userId: ',userId)
+  //   setRoutes(useRoutes(userId));
+  // }, [userId]);
+  
+  const routes = useRoutes(userId);
 
   if (loading) {
     return (

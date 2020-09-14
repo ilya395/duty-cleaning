@@ -12,6 +12,8 @@ import counterEvents from '../../services/index';
 import ModalWindow from '../../components/Modal/Modal';
 import Firebase from '../../context/firebaseContext';
 
+import Preloader from '../../components/Preloader/Preloader';
+
 const { Header, Content, Footer } = Layout;
 
 const dataDefault = [
@@ -25,15 +27,18 @@ const dataDefault = [
 ];
 
 const MainLayout = (props) => {
+    const [loading, setLoading] = useState(true);
+    useEffect(() => setLoading(false), []);
+
     // console.log(props);
     // коллекция объектов, которые нужно распределить по дням
     const [data, setData] = useState(dataDefault);
     // текущая дата
     const [today, setToday] = useState(0);
     // текущий месяц
-    const [thisMonth, setThisMonth] = useState(0);
+    // const [thisMonth, setThisMonth] = useState(0);
     // количество дней в месяце
-    const [numberOfDaysInThisMonth, setNumberOfDays] = useState(30);
+    // const [numberOfDaysInThisMonth, setNumberOfDays] = useState(30);
     // мутации календрных дней
     const [mutationData, setMutationData] = useState({});
     // массив с данными для календаря 
@@ -82,7 +87,7 @@ const MainLayout = (props) => {
         .once('value')
         .then(res => {
           // console.log(res.val());
-          for ( let i in res.val() ) { // потомучто, если к нам приходят мутации из 1 элема с ключом 0, то приложение рассматривает это как массив
+          for ( let i in res.val() ) { // потомучто, если к нам приходят мутации из 1 элема с ключом 0, то приложение рассматривает это как массив, а не объект
             muts[i] = res.val()[i];
           }
           // console.log(muts, res.val())
@@ -93,13 +98,13 @@ const MainLayout = (props) => {
         .catch(error => console.log(error.message));      
     }, [today, getMutationsRef]);
     // текущий месяц
-    useEffect(() => {
-      setThisMonth(moment().format('M'));
-    }, []);
+    // useEffect(() => {
+    //   setThisMonth(moment().format('M'));
+    // }, []);
     // количество дней в месяце
-    useEffect(() => {
-      setNumberOfDays(() => moment(new Date()).daysInMonth());
-    }, []);
+    // useEffect(() => {
+    //   setNumberOfDays(() => moment(new Date()).daysInMonth());
+    // }, []);
     // массив с данными для календаря 
     useEffect(() => {
       // console.log('#### mutationData1: ', mutationData);
@@ -170,6 +175,12 @@ const MainLayout = (props) => {
 
       const { history } = props;
       history.push('/auth');
+    }
+
+    if (loading) {
+      return (
+        <Preloader />
+      );
     }
     
     // первый элемент

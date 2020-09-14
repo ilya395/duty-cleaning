@@ -2,19 +2,19 @@ import moment from 'moment';
 
 const counterEvents = (object) => {
     const { data: queueСollection, today, mutations } = object;
-    console.log('#### counterEvents: ', mutations);
+    // console.log('#### counterEvents: ', mutations);
 
     const numberOfDays = moment(today).daysInMonth(); // количество дней в месяце
     const thisYear = moment(today).format('YYYY'); // текущий год
     const thisMonth = moment(today).format('M') - 1;  // текущий месяц
 
     let array = [];
-    let countOfCut = 0;
+    // let countOfCut = 0;
     let countOfDaysNumber = 0;
 
-    const iter = Math.floor(numberOfDays/queueСollection.length); // отношение: сколько целых раз малая коллекция может поместиться в большой (отсечка)
+    // const iter = Math.floor(numberOfDays/queueСollection.length); // отношение: сколько целых раз малая коллекция может поместиться в большой (отсечка)
     // отсечка равна queueСollection.length
-    const surplus = numberOfDays%queueСollection.length; // отстаток
+    // const surplus = numberOfDays%queueСollection.length; // отстаток
 
     for ( let i = 0; i < numberOfDays; i++) { // день = i + 1
 
@@ -38,7 +38,7 @@ const counterEvents = (object) => {
                 countOfDaysNumber = indexInQueueСollection + 1;
             }
             if ( countOfDaysNumber > queueСollection.length ) {
-                countOfCut++; // отрезки
+                // countOfCut++; // отрезки
                 countOfDaysNumber = 1;
             }
             //

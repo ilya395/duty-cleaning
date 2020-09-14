@@ -4,7 +4,8 @@ import './AuthLayout.scss';
 
 import { Form, Input, Button } from 'antd';
 import FirebaseContext from '../../context/firebaseContext';
-import RoutesContext from '../../context/routesContext';
+// import RoutesContext from '../../context/routesContext';
+import Preloader from '../../components/Preloader/Preloader';
 
 const layout = {
     labelCol: {
@@ -25,7 +26,10 @@ const AuthLayout = (props) => {
 
     console.log('#### props in Auth: ', props, props.history);
 
-    const [history, setHistory] = useState({});
+    const [loading, setLoading] = useState(true);
+    useEffect(() => setLoading(false), []);
+
+    const [history, setHistory] = useState(null);
     useEffect(() => {
         const { history } = props;
         setHistory(history);
@@ -33,8 +37,8 @@ const AuthLayout = (props) => {
 
     const [authOk, setAuthOk] = useState(false);
 
-    let localUserData = localStorage.getItem('userId');
-    const [localData, setLocalData] = useState(localUserData);
+    // let localUserData = localStorage.getItem('userId');
+    // const [localData, setLocalData] = useState(localUserData);
 
     const { signWithEmail } = useContext(FirebaseContext);
     // const { history } = props; // useContext(RoutesContext);
@@ -55,12 +59,13 @@ const AuthLayout = (props) => {
       const {email, password} = values;
       signWithEmail(email, password)
         .then(res => {
-            console.log('Success:', values);
-            console.log(res);
-            localStorage.setItem('userId', res.user.uid);
+            console.log('Success!');
+            // console.log(res, values);
             setAuthOk(true);
-            console.log(localStorage.getItem('userId'));
-            console.log(history);
+            localStorage.setItem('userId', res.user.uid);
+            
+            // console.log(localStorage.getItem('userId'));
+            // console.log(history);
             history.push('/main');
         })
         .catch(() => {
@@ -72,6 +77,12 @@ const AuthLayout = (props) => {
     const onFinishFailed = errorInfo => {
       console.log('Failed:', errorInfo);
     };
+
+    if (loading) {
+        return (
+          <Preloader />
+        );
+    }
 
     return (
         <div className="form-wrap">
