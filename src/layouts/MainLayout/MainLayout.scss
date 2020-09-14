@@ -22,3 +22,15 @@
     height: 100vh;
     margin-top: 62px;
 }
+
+.header-block {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    & .header-block__title-page {
+        margin-bottom: 0;
+        color: #fff;
+    }
+}

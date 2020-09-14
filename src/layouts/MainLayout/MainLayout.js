@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 
 import './MainLayout.scss';
-import { Layout, Menu } from 'antd';
+import { Layout } from 'antd';
+import { Typography } from 'antd';
 
 import MyCalendar from '../../components/Calendar/Calendar';
 import moment from 'moment';
@@ -15,6 +16,7 @@ import Firebase from '../../context/firebaseContext';
 import Preloader from '../../components/Preloader/Preloader';
 
 const { Header, Content, Footer } = Layout;
+const { Title } = Typography;
 
 const dataDefault = [
   {title: 'Ожидание данных', id: 999},
@@ -187,13 +189,9 @@ const MainLayout = (props) => {
     return (
       <>
         <Layout className="layout main-layout main-layout_all-height">
-          <Header>
-            <div className="logo" />
-            <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
-              <Menu.Item key="1">nav 1</Menu.Item>
-              <Menu.Item key="2">nav 2</Menu.Item>
-              <Menu.Item key="3">nav 3</Menu.Item>
-            </Menu>
+          <Header className="header-block">
+            {/* <div className="logo" /> */}
+            <Title level={1} className="header-block__title-page">Рассписание дежурств</Title>
             <LogoutButton
               logoutPlz={logoutPlz}
             />
